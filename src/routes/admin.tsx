@@ -103,7 +103,7 @@ function Login() {
 }
 
 function Dashboard({ session }: { session: Session }) {
-  const mustChange = !!session.user.user_metadata?.must_change_password;
+  const mustChange = !!session.user.user_metadata?.['must_change_password'];
   const [pwOpen, setPwOpen] = useState(mustChange);
   return (
     <div className="min-h-screen bg-muted">
@@ -149,10 +149,10 @@ function PasswordDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
           className="space-y-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (pw.length < 10) return toast.error("Use at least 10 characters.");
-            if (pw !== pw2) return toast.error("Passwords don't match.");
+            if (pw.length < 10) { toast.error("Use at least 10 characters."); return; }
+            if (pw !== pw2) { toast.error("Passwords don't match."); return; }
             const { error } = await supabase.auth.updateUser({ password: pw, data: { must_change_password: false } });
-            if (error) return toast.error(error.message);
+            if (error) { toast.error(error.message); return; }
             toast.success("Password updated");
             setPw("");
             setPw2("");
@@ -224,7 +224,7 @@ function Orders() {
 
   async function updateStatus(o: Order, s: OrderStatus) {
     const { error } = await supabase.from("orders").update({ status: s, status_history: [...o.status_history, { status: s, at: new Date().toISOString() }] }).eq("id", o.id);
-    if (error) return toast.error("Could not update status");
+    if (error) { toast.error("Could not update status"); return; }
     toast.success(`${o.reference} → ${ORDER_STATUSES[s]}`);
     qc.invalidateQueries({ queryKey: ["admin-orders"] });
   }
@@ -321,7 +321,7 @@ function ProductEditor({ initial, onClose }: { initial: Partial<Product>; onClos
   }
 
   async function save() {
-    if (!p.name?.trim()) return toast.error("Name is required");
+    if (!p.name?.trim()) { toast.error("Name is required"); return; }
     setBusy(true);
     const row = {
       name: p.name.trim(), description: p.description ?? "", category: p.category!, price: Math.max(0, Math.round(Number(p.price) || 0)),
@@ -330,7 +330,7 @@ function ProductEditor({ initial, onClose }: { initial: Partial<Product>; onClos
     };
     const { error } = p.id ? await supabase.from("products").update(row).eq("id", p.id) : await supabase.from("products").insert(row);
     setBusy(false);
-    if (error) return toast.error("Could not save product");
+    if (error) { toast.error("Could not save product"); return; }
     toast.success("Product saved");
     qc.invalidateQueries({ queryKey: ["admin-products"] });
     qc.invalidateQueries({ queryKey: ["products"] });
@@ -340,7 +340,7 @@ function ProductEditor({ initial, onClose }: { initial: Partial<Product>; onClos
   async function remove() {
     if (!p.id || !confirm(`Delete ${p.name}? This can't be undone.`)) return;
     const { error } = await supabase.from("products").delete().eq("id", p.id);
-    if (error) return toast.error("Could not delete");
+    if (error) { toast.error("Could not delete"); return; }
     toast.success("Product deleted");
     qc.invalidateQueries({ queryKey: ["admin-products"] });
     qc.invalidateQueries({ queryKey: ["products"] });

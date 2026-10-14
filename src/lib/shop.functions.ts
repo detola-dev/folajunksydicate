@@ -121,14 +121,14 @@ export const adminLogin = createServerFn({ method: "POST" })
     };
     if (data.username.toLowerCase() !== ADMIN_USERNAME) return fail();
 
-    const anon = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    const anon = createClient(process.env['SUPABASE_URL']!, process.env['SUPABASE_PUBLISHABLE_KEY']!, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     let res = await anon.auth.signInWithPassword({ email: ADMIN_EMAIL, password: data.password });
 
     if (res.error) {
       // First-time setup: create the admin account from the initial secret if it doesn't exist yet.
-      const initial = process.env.ADMIN_INITIAL_PASSWORD;
+      const initial = process.env['ADMIN_INITIAL_PASSWORD'];
       const { data: roles } = await supabaseAdmin.from("user_roles").select("id").eq("role", "admin").limit(1);
       if (initial && (!roles || roles.length === 0) && data.password === initial) {
         const { data: created, error: cErr } = await supabaseAdmin.auth.admin.createUser({

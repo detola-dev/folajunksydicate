@@ -5,7 +5,7 @@ export type CartLine = {
   productId: string;
   name: string;
   price: number;
-  image?: string;
+  image?: string | undefined;
   variant: string;
   device: string;
   quantity: number;
