@@ -172,7 +172,7 @@ function Checkout() {
   );
 }
 
-function Field({ id, label, error, className, children }: { id: string; label: string; error?: string; className?: string; children: React.ReactNode }) {
+function Field({ id, label, error, className, children }: { id: string; label: string; error?: string | undefined; className?: string; children: React.ReactNode }) {
   return (
     <div className={className}>
       <Label htmlFor={id} className="mb-1.5 block">{label}</Label>
