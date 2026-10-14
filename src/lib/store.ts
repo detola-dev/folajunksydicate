@@ -35,10 +35,21 @@ export const ORDER_STATUSES = {
 } as const;
 export type OrderStatus = keyof typeof ORDER_STATUSES;
 
+export const DELIVERY_STATUSES = {
+  confirmed: "Order Confirmed",
+  ready: "Product Ready for Delivery",
+  on_the_way: "On Its Way",
+  delivered: "Delivered",
+} as const;
+export type DeliveryStatus = keyof typeof DELIVERY_STATUSES;
+
+export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
 export type MediaItem = { type: "image" | "video"; url: string; poster?: string };
 
 export type Product = {
   id: string;
+  slug: string | null;
   name: string;
   description: string;
   category: CategoryId;

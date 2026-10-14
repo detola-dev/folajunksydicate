@@ -42,7 +42,7 @@ export const createOrder = createServerFn({ method: "POST" })
     const ids = [...new Set(data.items.map((i) => i.productId))];
     const { data: products, error } = await supabaseAdmin
       .from("products")
-      .select("id,name,price,stock_status,allow_backorder,published")
+      .select("id,name,price,stock_status,allow_backorder,published,variants")
       .in("id", ids);
     if (error) throw new Error("Could not load products. Please try again.");
     const byId = new Map(products!.map((p) => [p.id, p]));
@@ -51,6 +51,7 @@ export const createOrder = createServerFn({ method: "POST" })
       const p = byId.get(i.productId);
       if (!p || !p.published) throw new Error("A product in your cart is no longer available.");
       if (p.stock_status === "sold_out" && !p.allow_backorder) throw new Error(`${p.name} is sold out.`);
+      if (p.variants.length > 0 && !p.variants.includes(i.variant)) throw new Error(`Please choose a colour / design for ${p.name}.`);
       return {
         product_id: p.id,
         product_name: p.name,
@@ -79,6 +80,8 @@ export const createOrder = createServerFn({ method: "POST" })
           notes: c.notes,
           total,
           status_history: [{ status: "new", at: new Date().toISOString() }],
+          delivery_status: "confirmed",
+          delivery_history: [{ status: "confirmed", at: new Date().toISOString() }],
         })
         .select("id")
         .single();
