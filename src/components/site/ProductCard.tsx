@@ -46,7 +46,7 @@ export function ProductCard({ product }: { product: Product }) {
   );
 }
 
-const SWATCH: Record<string, string> = { pink: "var(--color-rose, hotpink)", silver: "silver", blue: "deepskyblue" };
+const SWATCH: Record<string, string> = { pink: "hotpink", silver: "silver", blue: "deepskyblue" };
 
 export function function OptionGroup({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
   return (
