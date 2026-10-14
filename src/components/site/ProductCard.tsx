@@ -48,7 +48,7 @@ export function ProductCard({ product }: { product: Product }) {
 
 const SWATCH: Record<string, string> = { pink: "hotpink", silver: "silver", blue: "deepskyblue" };
 
-export function function OptionGroup({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
+export function OptionGroup({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
   return (
     <fieldset>
       <legend className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">{label}</legend>
