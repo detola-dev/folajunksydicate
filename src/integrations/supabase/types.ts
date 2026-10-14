@@ -14,16 +14,215 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_login_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          device: string
+          id: string
+          line_total: number
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+          variant: string
+        }
+        Insert: {
+          device?: string
+          id?: string
+          line_total: number
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+          variant?: string
+        }
+        Update: {
+          device?: string
+          id?: string
+          line_total?: number
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          unit_price?: number
+          variant?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          customer_name: string
+          email: string
+          id: string
+          notes: string
+          phone: string
+          reference: string
+          state: string
+          status: string
+          status_history: Json
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          customer_name: string
+          email?: string
+          id?: string
+          notes?: string
+          phone: string
+          reference: string
+          state: string
+          status?: string
+          status_history?: Json
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          customer_name?: string
+          email?: string
+          id?: string
+          notes?: string
+          phone?: string
+          reference?: string
+          state?: string
+          status?: string
+          status_history?: Json
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          allow_backorder: boolean
+          category: string
+          created_at: string
+          description: string
+          devices: string[]
+          id: string
+          media: Json
+          name: string
+          notes: string
+          price: number
+          price_is_starting: boolean
+          price_note: string
+          published: boolean
+          sort_order: number
+          stock_qty: number | null
+          stock_status: string
+          updated_at: string
+          variants: string[]
+        }
+        Insert: {
+          allow_backorder?: boolean
+          category: string
+          created_at?: string
+          description?: string
+          devices?: string[]
+          id?: string
+          media?: Json
+          name: string
+          notes?: string
+          price?: number
+          price_is_starting?: boolean
+          price_note?: string
+          published?: boolean
+          sort_order?: number
+          stock_qty?: number | null
+          stock_status?: string
+          updated_at?: string
+          variants?: string[]
+        }
+        Update: {
+          allow_backorder?: boolean
+          category?: string
+          created_at?: string
+          description?: string
+          devices?: string[]
+          id?: string
+          media?: Json
+          name?: string
+          notes?: string
+          price?: number
+          price_is_starting?: boolean
+          price_note?: string
+          published?: boolean
+          sort_order?: number
+          stock_qty?: number | null
+          stock_status?: string
+          updated_at?: string
+          variants?: string[]
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +349,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
