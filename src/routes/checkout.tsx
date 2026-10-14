@@ -91,6 +91,7 @@ function Checkout() {
       const message = buildMessage(res.reference, res.items, res.total, parsed.data);
       const url = `${WHATSAPP_URL}?text=${encodeURIComponent(message)}`;
       setDone({ ref: res.reference, message, url });
+      window.scrollTo({ top: 0 });
       cart.clear();
       if (url.length < 4000) window.open(url, "_blank", "noopener");
     } catch (err) {
