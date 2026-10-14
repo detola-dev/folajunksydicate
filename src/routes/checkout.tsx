@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { CheckCircle2, Copy, MessageCircle } from "lucide-react";
+import { CheckCircle2, Copy, MessageCircle, PackageSearch } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +66,7 @@ function Checkout() {
   const [form, setForm] = useState<Form>(empty);
   const [errors, setErrors] = useState<Partial<Record<keyof Form, string>>>({});
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState<{ ref: string; message: string; url: string } | null>(null);
+  const [done, setDone] = useState<{ ref: string; url: string } | null>(null);
 
   const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -90,7 +90,7 @@ function Checkout() {
       });
       const message = buildMessage(res.reference, res.items, res.total, parsed.data);
       const url = `${WHATSAPP_URL}?text=${encodeURIComponent(message)}`;
-      setDone({ ref: res.reference, message, url });
+      setDone({ ref: res.reference, url });
       window.scrollTo({ top: 0 });
       cart.clear();
       if (url.length < 4000) window.open(url, "_blank", "noopener");
@@ -105,20 +105,29 @@ function Checkout() {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <CheckCircle2 className="mx-auto h-14 w-14 text-success" />
-        <h1 className="mt-4 text-4xl font-semibold">Order saved!</h1>
-        <p className="mt-2 text-muted-foreground">Your order reference is</p>
+        <h1 className="mt-4 text-4xl font-semibold">Order placed successfully!</h1>
+        <p className="mt-2 text-muted-foreground">Your tracking ID is</p>
         <p className="mt-1 font-mono text-2xl font-bold text-rose">{done.ref}</p>
         <p className="mx-auto mt-4 max-w-sm text-sm text-muted-foreground">
-          WhatsApp should open with your order details. Please <strong>send the message</strong> so we can share payment details. Your order is not paid yet.
+          Your order is saved. WhatsApp should open with your order details — please <strong>send the message</strong> so we can share payment details. Your order is not paid yet.
         </p>
         <div className="mt-6 flex flex-col gap-3">
-          <Button asChild className="h-12 rounded-full">
+          <Button
+            className="h-12 rounded-full"
+            onClick={async () => {
+              try { await navigator.clipboard.writeText(done.ref); toast.success("Tracking ID copied!"); }
+              catch { toast.error("Couldn't copy — please write the ID down."); }
+            }}
+          >
+            <Copy className="h-4 w-4" /> Copy Tracking ID
+          </Button>
+          <Button asChild variant="outline" className="h-12 rounded-full">
+            <Link to="/track-order" search={{ ref: done.ref }}><PackageSearch className="h-4 w-4" /> Track My Order</Link>
+          </Button>
+          <Button asChild variant="outline" className="h-12 rounded-full">
             <a href={done.url} target="_blank" rel="noreferrer"><MessageCircle className="h-4 w-4" /> Open WhatsApp</a>
           </Button>
-          <Button variant="outline" className="h-12 rounded-full" onClick={() => navigator.clipboard.writeText(done.message).then(() => toast.success("Message copied"))}>
-            <Copy className="h-4 w-4" /> Copy message
-          </Button>
-          <Link to="/" className="text-sm font-semibold text-primary">Back to the shop</Link>
+          <Link to="/" className="text-sm font-semibold text-primary">Continue Shopping</Link>
         </div>
       </div>
     );

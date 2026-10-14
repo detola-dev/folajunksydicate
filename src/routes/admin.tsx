@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Logo } from "@/components/site/Logo";
-import { CATEGORIES, ORDER_STATUSES, STOCK_STATUSES, categoryLabel, naira, type MediaItem, type OrderStatus, type Product } from "@/lib/store";
+import { CATEGORIES, DELIVERY_STATUSES, ORDER_STATUSES, slugify, type DeliveryStatus, STOCK_STATUSES, categoryLabel, naira, type MediaItem, type OrderStatus, type Product } from "@/lib/store";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -170,7 +170,7 @@ function PasswordDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (
 
 type Order = {
   id: string; reference: string; customer_name: string; phone: string; email: string; address: string; city: string; state: string; notes: string;
-  total: number; status: OrderStatus; status_history: { status: string; at: string }[]; created_at: string;
+  total: number; status: OrderStatus; delivery_status: DeliveryStatus; delivery_history: { status: string; at: string }[]; status_history: { status: string; at: string }[]; created_at: string;
   order_items: { id: string; product_name: string; variant: string; device: string; quantity: number; unit_price: number; line_total: number }[];
 };
 
@@ -229,6 +229,13 @@ function Orders() {
     qc.invalidateQueries({ queryKey: ["admin-orders"] });
   }
 
+  async function updateDelivery(o: Order, s: DeliveryStatus) {
+    const { error } = await supabase.from("orders").update({ delivery_status: s, delivery_history: [...(o.delivery_history ?? []), { status: s, at: new Date().toISOString() }] }).eq("id", o.id);
+    if (error) { toast.error("Could not update delivery status"); return; }
+    toast.success(`${o.reference} → ${DELIVERY_STATUSES[s]}`);
+    qc.invalidateQueries({ queryKey: ["admin-orders"] });
+  }
+
   return (
     <div className="mt-4 space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row">
@@ -248,9 +255,18 @@ function Orders() {
               <p className="font-mono font-bold text-rose">{o.reference}</p>
               <p className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleString("en-NG")}</p>
             </div>
-            <select aria-label="Order status" className="h-9 rounded-md border bg-card px-2 text-sm" value={o.status} onChange={(e) => updateStatus(o, e.target.value as OrderStatus)}>
-              {Object.entries(ORDER_STATUSES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-            </select>
+            <div className="flex flex-wrap gap-2">
+              <label className="text-xs text-muted-foreground">Payment / order
+                <select aria-label="Order status" className="mt-1 block h-9 rounded-md border bg-card px-2 text-sm text-foreground" value={o.status} onChange={(e) => updateStatus(o, e.target.value as OrderStatus)}>
+                  {Object.entries(ORDER_STATUSES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </label>
+              <label className="text-xs text-muted-foreground">Delivery (shown to customer)
+                <select aria-label="Delivery status" className="mt-1 block h-9 rounded-md border bg-card px-2 text-sm text-foreground" value={o.delivery_status} onChange={(e) => updateDelivery(o, e.target.value as DeliveryStatus)}>
+                  {Object.entries(DELIVERY_STATUSES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </label>
+            </div>
           </div>
           <div className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
             <div>
@@ -324,6 +340,7 @@ function ProductEditor({ initial, onClose }: { initial: Partial<Product>; onClos
     if (!p.name?.trim()) { toast.error("Name is required"); return; }
     setBusy(true);
     const row = {
+      ...(p.id ? {} : { slug: `${slugify(p.name)}-${crypto.randomUUID().slice(0, 4)}` }),
       name: p.name.trim(), description: p.description ?? "", category: p.category!, price: Math.max(0, Math.round(Number(p.price) || 0)),
       price_is_starting: !!p.price_is_starting, price_note: p.price_note ?? "", media: (p.media ?? []) as never, variants: p.variants ?? [], devices: p.devices ?? [],
       stock_status: p.stock_status!, stock_qty: p.stock_qty ?? null, allow_backorder: !!p.allow_backorder, notes: p.notes ?? "", published: p.published ?? true, sort_order: p.sort_order ?? 0,
