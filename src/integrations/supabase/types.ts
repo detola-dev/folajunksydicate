@@ -82,6 +82,8 @@ export type Database = {
           city: string
           created_at: string
           customer_name: string
+          delivery_history: Json
+          delivery_status: string
           email: string
           id: string
           notes: string
@@ -98,6 +100,8 @@ export type Database = {
           city: string
           created_at?: string
           customer_name: string
+          delivery_history?: Json
+          delivery_status?: string
           email?: string
           id?: string
           notes?: string
@@ -114,6 +118,8 @@ export type Database = {
           city?: string
           created_at?: string
           customer_name?: string
+          delivery_history?: Json
+          delivery_status?: string
           email?: string
           id?: string
           notes?: string
@@ -142,6 +148,7 @@ export type Database = {
           price_is_starting: boolean
           price_note: string
           published: boolean
+          slug: string | null
           sort_order: number
           stock_qty: number | null
           stock_status: string
@@ -162,6 +169,7 @@ export type Database = {
           price_is_starting?: boolean
           price_note?: string
           published?: boolean
+          slug?: string | null
           sort_order?: number
           stock_qty?: number | null
           stock_status?: string
@@ -182,6 +190,7 @@ export type Database = {
           price_is_starting?: boolean
           price_note?: string
           published?: boolean
+          slug?: string | null
           sort_order?: number
           stock_qty?: number | null
           stock_status?: string
@@ -220,6 +229,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      track_order: { Args: { _ref: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin"
