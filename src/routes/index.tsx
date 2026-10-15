@@ -5,18 +5,12 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { CATEGORIES, TIKTOK_HANDLE, TIKTOK_URL, productsQuery, type CategoryId } from "@/lib/store";
 import { ProductCard } from "@/components/site/ProductCard";
 import { cn } from "@/lib/utils";
-import heroVideo from "@/assets/media/case-v2.mp4.asset.json";
-import heroPoster from "@/assets/media/case-v2-poster.jpg.asset.json";
-import caseImg from "@/assets/media/case-1.jpg.asset.json";
-import lashImg from "@/assets/media/lashes-2.jpg.asset.json";
-import patchImg from "@/assets/media/patches-v1-poster.jpg.asset.json";
-import bracesImg from "@/assets/media/braces-1.jpg.asset.json";
 
 const TILE_IMG: Record<CategoryId, string> = {
-  "junk-cases": caseImg.url,
-  "cluster-lashes": lashImg.url,
-  "pimple-patches": patchImg.url,
-  braces: bracesImg.url,
+  "junk-cases": "/media/case-1.jpg",
+  "cluster-lashes": "/media/lashes-2.jpg",
+  "pimple-patches": "/media/patches-v1-poster.jpg",
+  braces: "/media/braces-1.jpg",
 };
 
 export const Route = createFileRoute("/")({
@@ -64,7 +58,10 @@ function Index() {
           </div>
           <div className="relative mx-auto w-full max-w-sm">
             <div className="absolute -inset-3 rotate-3 rounded-[2rem] bg-blush" aria-hidden />
-            <video src={heroVideo.url} poster={heroPoster.url} autoPlay muted loop playsInline aria-label="A handmade junk phone case" className="relative aspect-[4/5] w-full rounded-[2rem] object-cover shadow-soft" />
+            <video poster="/media/case-v2-poster.jpg" autoPlay muted loop playsInline aria-label="A handmade junk phone case" className="relative aspect-[4/5] w-full rounded-[2rem] object-cover shadow-soft">
+              <source src="/media/case-v2.webm" type="video/webm" />
+              <source src="/media/case-v2.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>
