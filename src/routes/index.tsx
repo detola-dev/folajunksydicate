@@ -58,7 +58,10 @@ function Index() {
           </div>
           <div className="relative mx-auto w-full max-w-sm">
             <div className="absolute -inset-3 rotate-3 rounded-[2rem] bg-blush" aria-hidden />
-            <video src="/media/case-v2.mp4" poster="/media/case-v2-poster.jpg" autoPlay muted loop playsInline aria-label="A handmade junk phone case" className="relative aspect-[4/5] w-full rounded-[2rem] object-cover shadow-soft" />
+            <video poster="/media/case-v2-poster.jpg" autoPlay muted loop playsInline aria-label="A handmade junk phone case" className="relative aspect-[4/5] w-full rounded-[2rem] object-cover shadow-soft">
+              <source src="/media/case-v2.webm" type="video/webm" />
+              <source src="/media/case-v2.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>

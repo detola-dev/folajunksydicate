@@ -46,7 +46,6 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
     <div className="relative h-full w-full">
       <video
         ref={ref}
-        src={active ? mediaUrl(item.url) : undefined}
         poster={mediaUrl(item.poster)}
         muted
         loop
@@ -55,7 +54,10 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
         aria-label={alt}
         onError={() => active && setFailed(true)}
         className="h-full w-full object-cover"
-      />
+      >
+        {active && mediaUrl(item.url)?.startsWith("/media/") && <source src={mediaUrl(item.url)?.replace(/\.mp4$/, ".webm")} type="video/webm" />}
+        {active && <source src={mediaUrl(item.url)} type="video/mp4" />}
+      </video>
       <div className="absolute bottom-2 left-2 flex gap-1.5">
         <button type="button" onClick={toggle} aria-label={playing ? "Pause video" : "Play video"} className="grid h-8 w-8 place-items-center rounded-full bg-card/85 text-foreground shadow-sm backdrop-blur">
           {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
