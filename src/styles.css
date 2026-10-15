@@ -82,9 +82,6 @@
   --sidebar-ring: oklch(0.56 0.19 0);
   --gradient-pearl: linear-gradient(135deg, oklch(0.99 0.005 350), oklch(0.94 0.04 355) 45%, oklch(0.97 0.02 300));
   --shadow-soft: 0 10px 30px -14px oklch(0.56 0.19 0 / 0.35);
-  --cart-glass-background: oklch(0.993 0.004 350 / 0.82);
-  --cart-glass-border: oklch(0.91 0.03 355 / 0.7);
-  --cart-glass-shadow: 0 8px 32px -10px oklch(0.24 0.04 355 / 0.18);
 }
 
 @layer base {
@@ -114,18 +111,6 @@
 }
 .animate-logo-reveal { animation: logo-reveal 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 .animate-sparkle { animation: sparkle 2.6s ease-in-out infinite; }
-
-.menu-glyph { position: relative; display: block; width: 20px; height: 18px; }
-.menu-glyph span { position: absolute; left: 0; width: 20px; height: 2px; border-radius: 2px; background: currentColor; transition: transform 250ms ease, opacity 200ms ease, top 250ms ease; }
-.menu-glyph span:nth-child(1) { top: 1px; }
-.menu-glyph span:nth-child(2) { top: 8px; }
-.menu-glyph span:nth-child(3) { top: 15px; }
-.menu-glyph[data-open="true"] span:nth-child(1) { top: 8px; transform: rotate(45deg); }
-.menu-glyph[data-open="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0.5); }
-.menu-glyph[data-open="true"] span:nth-child(3) { top: 8px; transform: rotate(-45deg); }
-.menu-link { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 600; transition: background-color 180ms ease; }
-.menu-link:hover { background-color: var(--secondary); }
-.cart-glass-toast { background: var(--cart-glass-background); border-color: var(--cart-glass-border); box-shadow: var(--cart-glass-shadow); backdrop-filter: blur(16px) saturate(140%); animation: logo-reveal 250ms ease both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

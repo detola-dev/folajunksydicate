@@ -3,7 +3,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, Pause, Play, Volume2, VolumeX, ImageOff } from "lucide-react";
 import type { MediaItem } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { mediaUrl } from "@/lib/media";
 
 function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; alt: string }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -33,8 +32,7 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
 
   const toggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const v = ref.current;
-    if (!v) return;
+    const v = ref.current!;
     if (v.paused) v.play().then(() => setPlaying(true)).catch(() => {});
     else {
       v.pause();
@@ -46,7 +44,8 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
     <div className="relative h-full w-full">
       <video
         ref={ref}
-        poster={mediaUrl(item.poster)}
+        src={active ? item.url : undefined}
+        poster={item.poster}
         muted
         loop
         playsInline
@@ -54,10 +53,7 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
         aria-label={alt}
         onError={() => active && setFailed(true)}
         className="h-full w-full object-cover"
-      >
-        {active && mediaUrl(item.url)?.startsWith("/media/") && mediaUrl(item.url)?.endsWith(".mp4") && <source src={mediaUrl(item.url)?.replace(/\.mp4$/, ".webm")} type="video/webm" />}
-        {active && <source src={mediaUrl(item.url)} />}
-      </video>
+      />
       <div className="absolute bottom-2 left-2 flex gap-1.5">
         <button type="button" onClick={toggle} aria-label={playing ? "Pause video" : "Play video"} className="grid h-8 w-8 place-items-center rounded-full bg-card/85 text-foreground shadow-sm backdrop-blur">
           {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
@@ -66,8 +62,7 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            const v = ref.current;
-            if (!v) return;
+            const v = ref.current!;
             v.muted = !v.muted;
             setMuted(v.muted);
           }}
@@ -107,7 +102,7 @@ export function MediaGallery({ media, alt, className, controls = true }: { media
               {m.type === "video" ? (
                 <VideoSlide item={m} active={i === index} alt={`${alt} video ${i + 1}`} />
               ) : (
-                <img src={mediaUrl(m.url)} alt={`${alt} photo ${i + 1}`} loading="lazy" className="h-full w-full object-cover" />
+                <img src={m.url} alt={`${alt} photo ${i + 1}`} loading="lazy" className="h-full w-full object-cover" />
               )}
             </div>
           ))}

@@ -13,5 +13,3 @@
 - Orders are created only via the `createOrder` server function (server recomputes prices from the DB); never insert orders from the browser.
 - Admin login goes through the `adminLogin` server function (username → internal email, rate-limited); admin rights come from `user_roles` + `has_role()` RLS, never client checks.
 - Product media lives in the private `product-media` bucket; admin uploads store long-lived signed URLs in `products.media`.
-- Recovered original seed media is served from `public/media`; presentation resolves legacy asset URLs through `src/lib/media.ts` without rewriting product records or future admin uploads, so deployment is host-independent.
-- Header navigation uses the existing Radix dialog primitives and real existing destinations; cart confirmations use custom Sonner toasts, keeping cart and checkout logic unchanged.
