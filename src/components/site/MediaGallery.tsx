@@ -3,6 +3,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, Pause, Play, Volume2, VolumeX, ImageOff } from "lucide-react";
 import type { MediaItem } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { mediaUrl } from "@/lib/media";
 
 function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; alt: string }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -32,7 +33,8 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
 
   const toggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const v = ref.current!;
+    const v = ref.current;
+    if (!v) return;
     if (v.paused) v.play().then(() => setPlaying(true)).catch(() => {});
     else {
       v.pause();
@@ -44,8 +46,8 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
     <div className="relative h-full w-full">
       <video
         ref={ref}
-        src={active ? item.url : undefined}
-        poster={item.poster}
+        src={active ? mediaUrl(item.url) : undefined}
+        poster={mediaUrl(item.poster)}
         muted
         loop
         playsInline
@@ -62,7 +64,8 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            const v = ref.current!;
+            const v = ref.current;
+            if (!v) return;
             v.muted = !v.muted;
             setMuted(v.muted);
           }}
@@ -102,7 +105,7 @@ export function MediaGallery({ media, alt, className, controls = true }: { media
               {m.type === "video" ? (
                 <VideoSlide item={m} active={i === index} alt={`${alt} video ${i + 1}`} />
               ) : (
-                <img src={m.url} alt={`${alt} photo ${i + 1}`} loading="lazy" className="h-full w-full object-cover" />
+                <img src={mediaUrl(m.url)} alt={`${alt} photo ${i + 1}`} loading="lazy" className="h-full w-full object-cover" />
               )}
             </div>
           ))}

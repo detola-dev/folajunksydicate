@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetPortal, SheetOverlay
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import { useCart } from "@/lib/cart";
+import { mediaUrl } from "@/lib/media";
 import { EMAIL, TIKTOK_HANDLE, TIKTOK_URL, WHATSAPP_URL, naira } from "@/lib/store";
 
 export function Header() {
@@ -81,7 +82,7 @@ function CartSheet() {
             <ul className="-mx-2 flex-1 space-y-3 overflow-y-auto px-2">
               {cart.lines.map((l) => (
                 <li key={l.key} className="flex gap-3 rounded-xl border p-2">
-                  {l.image ? <img src={l.image} alt="" className="h-20 w-16 rounded-lg object-cover" /> : <div className="h-20 w-16 rounded-lg bg-muted" />}
+                  {l.image ? <img src={mediaUrl(l.image)} alt="" className="h-20 w-16 rounded-lg object-cover" /> : <div className="h-20 w-16 rounded-lg bg-muted" />}
                   <div className="flex flex-1 flex-col">
                     <div className="flex justify-between gap-2">
                       <p className="font-semibold">{l.name}</p>
