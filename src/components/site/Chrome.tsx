@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Minus, Plus, ShoppingBag, Trash2, Mail, MessageCircle } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useState } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Minus, Plus, ShoppingBag, Trash2, Mail, MessageCircle, Home, Package, PackageSearch, ArrowUpRight } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetPortal, SheetOverlay, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import { useCart } from "@/lib/cart";
@@ -8,26 +10,55 @@ import { EMAIL, TIKTOK_HANDLE, TIKTOK_URL, WHATSAPP_URL, naira } from "@/lib/sto
 
 export function Header() {
   const cart = useCart();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:h-24">
         <Link to="/" aria-label="Fola Junk Syndicate home">
-          <Logo />
+          <img src="/media/fola-junk-syndicate-logo.png" alt="Fola Junk Syndicate — Made with love, charms and resin magic!" width={1152} height={768} className="h-18 w-auto max-w-full object-contain sm:h-22" />
         </Link>
         <nav className="flex items-center gap-1 sm:gap-4">
           <a href="/#shop" className="hidden text-sm font-semibold hover:text-primary sm:block">Shop</a>
           <a href="/#contact" className="hidden text-sm font-semibold hover:text-primary sm:block">Contact</a>
-          <button type="button" onClick={() => cart.setOpen(true)} aria-label={`Open bag, ${cart.count} items`} className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-secondary">
+          <Button variant="ghost" size="icon" type="button" onClick={() => cart.setOpen(true)} aria-label={`Open bag, ${cart.count} items`} className="relative h-10 w-10 rounded-full hover:bg-secondary">
             <ShoppingBag className="h-5 w-5" />
             {cart.count > 0 && (
               <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">{cart.count}</span>
             )}
-          </button>
+          </Button>
+          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full" aria-label={menuOpen ? "Close menu" : "Open menu"}>
+                <MenuGlyph open={menuOpen} />
+              </Button>
+            </SheetTrigger>
+            <SheetPortal>
+              <SheetOverlay className="bg-foreground/25 backdrop-blur-sm" />
+              <DialogPrimitive.Content aria-describedby={undefined} className="navigation-drawer fixed bottom-4 right-4 top-4 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col rounded-3xl border bg-background p-6 shadow-soft data-[state=open]:animate-in data-[state=open]:slide-in-from-right data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:duration-300 data-[state=closed]:duration-200">
+                <div className="flex items-center justify-between border-b pb-5">
+                  <SheetTitle className="font-display text-2xl text-rose">Fola Junk Syndicate</SheetTitle>
+                  <SheetClose asChild><Button variant="ghost" size="icon" className="shrink-0 rounded-full" aria-label="Close menu"><MenuGlyph open={menuOpen} /></Button></SheetClose>
+                </div>
+                <nav aria-label="Main navigation" className="mt-5 flex flex-col gap-2">
+                  <Link to="/" onClick={closeMenu} className="menu-link"><Home className="h-5 w-5" />Home<ArrowUpRight className="ml-auto h-4 w-4" /></Link>
+                  <Link to="/" hash="shop" onClick={closeMenu} className="menu-link"><Package className="h-5 w-5" />Products<ArrowUpRight className="ml-auto h-4 w-4" /></Link>
+                  <Link to="/track-order" onClick={closeMenu} className="menu-link"><PackageSearch className="h-5 w-5" />Track Order<ArrowUpRight className="ml-auto h-4 w-4" /></Link>
+                  <Link to="/" hash="contact" onClick={closeMenu} className="menu-link"><MessageCircle className="h-5 w-5" />Contact Us<ArrowUpRight className="ml-auto h-4 w-4" /></Link>
+                  <Button variant="ghost" className="menu-link h-auto justify-start" onClick={() => { closeMenu(); cart.setOpen(true); }}><ShoppingBag className="h-5 w-5" />Cart<span className="ml-auto text-sm text-muted-foreground">{cart.count}</span></Button>
+                </nav>
+              </DialogPrimitive.Content>
+            </SheetPortal>
+          </Sheet>
         </nav>
       </div>
       <CartSheet />
     </header>
   );
+}
+
+function MenuGlyph({ open }: { open: boolean }) {
+  return <span aria-hidden="true" className="menu-glyph" data-open={open}><span /><span /><span /></span>;
 }
 
 function CartSheet() {
