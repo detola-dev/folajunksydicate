@@ -5,12 +5,12 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { CATEGORIES, TIKTOK_HANDLE, TIKTOK_URL, productsQuery, type CategoryId } from "@/lib/store";
 import { ProductCard } from "@/components/site/ProductCard";
 import { cn } from "@/lib/utils";
-import heroVideo from "@/assets/media/case-v2.mp4.asset.json";
-import heroPoster from "@/assets/media/case-v2-poster.jpg.asset.json";
-import caseImg from "@/assets/media/case-1.jpg.asset.json";
-import lashImg from "@/assets/media/lashes-2.jpg.asset.json";
-import patchImg from "@/assets/media/patches-v1-poster.jpg.asset.json";
-import bracesImg from "@/assets/media/braces-1.jpg.asset.json";
+const heroVideo = { url: "/media/case-v2.mp4" };
+const heroPoster = { url: "/media/case-v2-poster.jpg" };
+const caseImg = { url: "/media/case-1.jpg" };
+const lashImg = { url: "/media/lashes-2.jpg" };
+const patchImg = { url: "/media/patches-v1-poster.jpg" };
+const bracesImg = { url: "/media/braces-1.jpg" };
 
 const TILE_IMG: Record<CategoryId, string> = {
   "junk-cases": caseImg.url,
