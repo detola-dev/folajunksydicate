@@ -55,8 +55,8 @@ function VideoSlide({ item, active, alt }: { item: MediaItem; active: boolean; a
         onError={() => active && setFailed(true)}
         className="h-full w-full object-cover"
       >
-        {active && mediaUrl(item.url)?.startsWith("/media/") && <source src={mediaUrl(item.url)?.replace(/\.mp4$/, ".webm")} type="video/webm" />}
-        {active && <source src={mediaUrl(item.url)} type="video/mp4" />}
+        {active && mediaUrl(item.url)?.startsWith("/media/") && mediaUrl(item.url)?.endsWith(".mp4") && <source src={mediaUrl(item.url)?.replace(/\.mp4$/, ".webm")} type="video/webm" />}
+        {active && <source src={mediaUrl(item.url)} />}
       </video>
       <div className="absolute bottom-2 left-2 flex gap-1.5">
         <button type="button" onClick={toggle} aria-label={playing ? "Pause video" : "Play video"} className="grid h-8 w-8 place-items-center rounded-full bg-card/85 text-foreground shadow-sm backdrop-blur">
