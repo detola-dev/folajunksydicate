@@ -15,6 +15,13 @@
       "when": 1791939003576,
       "tag": "0001_tracking_slugs_braces",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792148417322,
+      "tag": "0002_restrict_product_media_read",
+      "breakpoints": true
     }
   ]
 }
