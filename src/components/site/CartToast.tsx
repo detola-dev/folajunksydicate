@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
-export function showAddedToast(opts: { name: string; image?: string; onView: () => void }) {
+export function showAddedToast(opts: { name: string; image?: string | undefined; onView: () => void }) {
   toast.custom(
     (id) => (
       <div className="flex w-[min(92vw,360px)] items-center gap-3 rounded-3xl border border-border/60 bg-card/70 p-2.5 pr-3 shadow-soft backdrop-blur-xl">
