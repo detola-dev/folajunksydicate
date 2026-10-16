@@ -1,13 +1,16 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Minus, Plus, ShoppingBag, Trash2, Mail, MessageCircle } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, Mail, MessageCircle, Home, Package, Truck, Phone } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import { useCart } from "@/lib/cart";
+import { cn } from "@/lib/utils";
 import { EMAIL, TIKTOK_HANDLE, TIKTOK_URL, WHATSAPP_URL, naira } from "@/lib/store";
 
 export function Header() {
   const cart = useCart();
+  const [menu, setMenu] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -23,10 +26,40 @@ export function Header() {
               <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">{cart.count}</span>
             )}
           </button>
+          <button type="button" onClick={() => setMenu((v) => !v)} aria-label={menu ? "Close menu" : "Open menu"} aria-expanded={menu} className="relative z-50 grid h-10 w-10 place-items-center rounded-full hover:bg-secondary">
+            <span className="relative block h-4 w-5">
+              <span className={cn("absolute left-0 h-0.5 w-5 rounded-full bg-foreground transition-all duration-300", menu ? "top-1.5 rotate-45" : "top-0")} />
+              <span className={cn("absolute left-0 top-1.5 h-0.5 w-5 rounded-full bg-foreground transition-opacity duration-200", menu && "opacity-0")} />
+              <span className={cn("absolute left-0 h-0.5 w-5 rounded-full bg-foreground transition-all duration-300", menu ? "top-1.5 -rotate-45" : "top-3")} />
+            </span>
+          </button>
         </nav>
       </div>
+      <NavDrawer open={menu} onClose={() => setMenu(false)} onCart={() => { setMenu(false); cart.setOpen(true); }} />
       <CartSheet />
     </header>
+  );
+}
+
+function NavDrawer({ open, onClose, onCart }: { open: boolean; onClose: () => void; onCart: () => void }) {
+  useEffect(() => {
+    if (!open) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [open, onClose]);
+  const item = "flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold transition-colors hover:bg-secondary";
+  return (
+    <>
+      <div onClick={onClose} aria-hidden className={cn("fixed inset-0 top-16 z-40 h-[calc(100vh-4rem)] bg-foreground/20 backdrop-blur-sm transition-opacity duration-300", open ? "opacity-100" : "pointer-events-none opacity-0")} />
+      <div role="dialog" aria-label="Site menu" aria-hidden={!open} className={cn("fixed right-3 top-[4.5rem] z-50 w-[min(88vw,300px)] origin-top-right rounded-3xl border bg-card/95 p-2 shadow-soft backdrop-blur-xl transition-all duration-300", open ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0")}>
+        <Link to="/" onClick={onClose} className={item} tabIndex={open ? 0 : -1}><Home className="h-4 w-4 text-primary" /> Home</Link>
+        <a href="/#shop" onClick={onClose} className={item} tabIndex={open ? 0 : -1}><Package className="h-4 w-4 text-primary" /> Products</a>
+        <Link to="/track-order" onClick={onClose} className={item} tabIndex={open ? 0 : -1}><Truck className="h-4 w-4 text-primary" /> Track Order</Link>
+        <a href="/#contact" onClick={onClose} className={item} tabIndex={open ? 0 : -1}><Phone className="h-4 w-4 text-primary" /> Contact Us</a>
+        <button type="button" onClick={onCart} className={cn(item, "w-full")} tabIndex={open ? 0 : -1}><ShoppingBag className="h-4 w-4 text-primary" /> Cart</button>
+      </div>
+    </>
   );
 }
 

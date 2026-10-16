@@ -3,6 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, Minus, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { showAddedToast } from "@/components/site/CartToast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { MediaGallery } from "@/components/site/MediaGallery";
@@ -91,9 +92,9 @@ function ProductPage() {
               disabled={!orderable}
               onClick={() => {
                 if (needsVariant && !variant) { toast.error(`Please choose a ${variantLabel.toLowerCase()} first`); return; }
-                cart.add({ productId: product.id, name: product.name, price: product.price, image: product.media.find((m) => m.type === "image")?.url ?? product.media[0]?.poster, variant, device }, qty);
-                toast.success(`${product.name} added to your bag`);
-                cart.setOpen(true);
+                const image = product.media.find((m) => m.type === "image")?.url ?? product.media[0]?.poster;
+                cart.add({ productId: product.id, name: product.name, price: product.price, image, variant, device }, qty);
+                showAddedToast({ name: product.name, image, onView: () => cart.setOpen(true) });
               }}
             >
               <Sparkles className="h-4 w-4" /> {orderable ? "Add to cart" : "Sold out"}
