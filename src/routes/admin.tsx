@@ -74,11 +74,12 @@ function Login() {
           setBusy(true);
           setError("");
           try {
-            const r = await login({ data: { username, password } });
+            const r = await login({ data: { username: username.trim().toLowerCase(), password: password.trim().toLowerCase() } });
             if (!r.ok) setError(r.error);
             else await supabase.auth.setSession({ access_token: r.access_token, refresh_token: r.refresh_token });
-          } catch {
-            setError("Login failed. Please try again.");
+          } catch (err) {
+            console.error("Admin login error", err);
+            setError("Login failed — the site couldn't reach the login service. If this is on another hosting (e.g. Vercel), its backend settings are missing.");
           } finally {
             setBusy(false);
           }
@@ -88,11 +89,11 @@ function Login() {
         <h1 className="text-2xl font-semibold">Admin sign in</h1>
         <div>
           <Label htmlFor="u">Username</Label>
-          <Input id="u" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <Input id="u" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())} required />
         </div>
         <div>
           <Label htmlFor="p">Password</Label>
-          <Input id="p" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <Input id="p" type="password" autoComplete="current-password" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={password} onChange={(e) => setPassword(e.target.value.toLowerCase())} required />
         </div>
         {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
         <Button type="submit" disabled={busy} className="w-full rounded-full">{busy ? "Signing in…" : "Sign in"}</Button>
